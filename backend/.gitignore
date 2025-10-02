@@ -1,0 +1,47 @@
+# -------------------------------------------------------------------
+# ARQUIVOS E DIRETÓRIOS PADRÕES DO PYTHON
+# -------------------------------------------------------------------
+# Ambientes virtuais
+venv/
+env/
+.venv/
+.env
+
+# Cache e arquivos de compilação
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.egg-info/
+.pytest_cache/
+.tox/
+
+# Logs e dados temporários
+*.log
+*.sqlite3 # Banco de dados SQLite (comum no desenvolvimento)
+db.sqlite3
+/media/ # Arquivos carregados pelos usuários
+/static/ # Arquivos estáticos coletados (se estiver usando collectstatic)
+
+# Arquivos do IDE (Ex: VS Code, PyCharm)
+.idea/
+.vscode/
+
+# -------------------------------------------------------------------
+# CONFIGURAÇÕES ESPECÍFICAS DO DJANGO
+# -------------------------------------------------------------------
+# Arquivos de configurações sensíveis
+# NÃO suba variáveis de ambiente ou chaves secretas!
+secret_settings.py
+local_settings.py
+settings_local.py
+*/settings/*.pyc
+.env # Variáveis de ambiente
+
+# -------------------------------------------------------------------
+# ARQUIVOS DE DEPENDÊNCIAS
+# -------------------------------------------------------------------
+# Dependências instaladas (pacotes do Python)
+/lib/
+/include/
+pip-selfcheck.json
