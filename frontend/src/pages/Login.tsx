@@ -18,11 +18,11 @@ export default function Login() {
 
     return (
     <div className="flex justify-center items-center min-h-screen bg-[#F8F9FA]">
-      <div className="bg-black shadow-2xl rounded-2xl p-8 w-96 border-t-4 border-[#FDC500]">
+      <div className="bg-white shadow-2xl rounded-2xl p-8 w-96 border-t-4 border-[#FDC500]">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-[#003049]">TrackVan</h1>
           <p className="text-gray-600 text-sm mt-1">
-            Segurança no transporte escolare
+            Segurança no transporte escolar
           </p>
         </div>
 
