@@ -7,7 +7,9 @@ Usuario = get_user_model()
 class UsuarioSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
-    
+    # OPCIONAL
+    first_name = serializers.CharField(required=False, allow_blank=True)
+    last_name = serializers.CharField(required=False, allow_blank=True)
     class Meta:
         model = Usuario
         fields = ['id', 'username', 'email', 'password', 'password2', 'first_name', 'last_name', 'tipo']
