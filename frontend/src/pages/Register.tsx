@@ -72,7 +72,6 @@ export default function Register() {
     } catch (error) {
       alert("Erro no cadastro")
       console.log(error)
-      console.log(form)
     }
   }
 

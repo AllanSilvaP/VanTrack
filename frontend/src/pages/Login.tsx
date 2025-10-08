@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
     const {login} = useAuth();
+    const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
@@ -11,6 +12,16 @@ export default function Login() {
         e.preventDefault();
         try {
             await login(username, password);
+
+            const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+            if (user.tipo === "responsavel") {
+              navigate("/responsavel");
+            } else if (user.tipo === "motorista") {
+              navigate("/motorista");
+            } else {
+              navigate("/")
+            }
         } catch (error) {
             alert("Usuário ou senha inválida")
             console.log(error)

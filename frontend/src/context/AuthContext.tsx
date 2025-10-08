@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, useState, useContext, type ReactNode} from "react";
 import api from "../api/axios"
+import { useEffect } from "react";
 
 type AuthContextType = {
     user: any;
@@ -17,21 +18,33 @@ export const AuthProvider = ({children}: {children: ReactNode})  => {
 
     const login = async (username: string, password: string) => {
         const response = await api.post('/usuarios/login/', {username, password});
-        const {access, refresh} = response.data;
-
-        localStorage.setItem("acess", access)
+        const {access, refresh, user} = response.data;
+        localStorage.setItem("access", access)
         localStorage.setItem("refresh", refresh)
-
-        setUser({ username});
+        localStorage.setItem("user", JSON.stringify(user))
+        setUser(user);
         setIsAuthenticated(true)
+
+        return user;
     };
 
     const logout = () => {
-        localStorage.removeItem("acess");
+        localStorage.removeItem("access");
         localStorage.removeItem("refresh")
+        localStorage.removeItem("user");
         setUser(null)
         setIsAuthenticated(false)
     };
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem("user");
+        const access = localStorage.getItem("access")
+
+        if (storedUser && access) {
+            setUser(JSON.parse(storedUser));
+            setIsAuthenticated(true)
+        }
+    }, [])
 
     return (
         <AuthContext.Provider value = {{user, login, logout, isAuthenticated}}>
