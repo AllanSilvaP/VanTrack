@@ -4,7 +4,6 @@ export default function Responsavel() {
     return (
         <div>
             <Navbar />
-            <p>Olá</p>
         </div>
     )
 }
