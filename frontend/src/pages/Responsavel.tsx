@@ -1,5 +1,10 @@
+import Navbar from "../components/navbar"
+
 export default function Responsavel() {
     return (
-        <p>Olá</p>
+        <div>
+            <Navbar />
+            <p>Olá</p>
+        </div>
     )
 }
