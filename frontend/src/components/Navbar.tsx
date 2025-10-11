@@ -3,7 +3,11 @@ import { useAuth } from "../context/AuthContext";
 import { Menu } from "lucide-react";
 import BotoesFuncionalidades from "./BotoesFuncionalidades";
 
-export default function NavbarComBotoes() {
+type NavbarProps = {
+  onFuncionalidadeClick?: (nome: string) => void;
+}
+
+export default function NavbarComBotoes({onFuncionalidadeClick} : NavbarProps) {
   const [openMenu, setOpenMenu] = useState(false);
   const { logout } = useAuth();
 
@@ -13,11 +17,6 @@ export default function NavbarComBotoes() {
   };
 
   const opcoes = ["Acompanhar Crianças", "Minhas Crianças"];
-
-  const handleBotaoClick = (nome: string) => {
-    console.log("Botão clicado:", nome);
-    // futuramente: redirecionar ou chamar funções específicas
-  };
 
   return (
     <div className="flex flex-col">
@@ -55,7 +54,9 @@ export default function NavbarComBotoes() {
       </nav>
 
       {/* BOTÕES FUNCIONALIDADES */}
-      <BotoesFuncionalidades opcoes={opcoes} onClick={handleBotaoClick} />
+      <BotoesFuncionalidades 
+      opcoes={opcoes} 
+      onClick={onFuncionalidadeClick} />
     </div>
   );
 }
