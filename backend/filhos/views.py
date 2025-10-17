@@ -1,11 +1,10 @@
-from rest_framework import viewsets, permissions
+from rest_framework import generics, permissions
 from .models import Filho
-from .serializers import FilhoSerializers
+from .serializers import FilhoSerializer
 
-class FilhoViewSet(viewsets.ModelViewSet):
+class FilhoListCreateView(generics.ListCreateAPIView):
     queryset = Filho.objects.all()
-    serializer_class = FilhoSerializers
-    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = FilhoSerializer
     
     def get_queryset(self):
         user = self.request.user
@@ -13,3 +12,10 @@ class FilhoViewSet(viewsets.ModelViewSet):
         if user.tipo == "responsavel":
             return Filho.objects.filter(responsavel=user)
         return Filho.objects.all()
+    
+    def perform_create(self, serializer):
+        serializer.save(responsavel=self.request.user)
+
+class FilhoDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Filho.objects.all()
+    serializer_class=FilhoSerializer
