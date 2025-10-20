@@ -1,6 +1,6 @@
 import api from "../api/axios"
 import { useEffect, useState } from "react"
-import { Plus } from "lucide-react"
+import { Plus, X } from "lucide-react"
 
 type Filho = {
     id: number;
@@ -14,10 +14,12 @@ type Filho = {
 export default function HubMinhasCriancas() {
     const [filhos, setFilhos] = useState<Filho[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    const [novoFilho, setNovoFilho] = useState({ nome: "", data_nascimento: "", escola: "", })
 
     const fetchFilhos = async () => {
         try {
-            const token = localStorage.getItem("acess")
+            const token = localStorage.getItem("access")
             const response = await api.get("/filhos/", {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -34,7 +36,34 @@ export default function HubMinhasCriancas() {
     }, []);
 
     const handleAddFilho = () => {
-        alert("ACHOU QUE IA FUNCIONAR KKKKK")
+        setShowModal(true);
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        try {
+            const token = localStorage.getItem("access")
+            await api.post(
+                "/filhos/", {
+                nome: novoFilho.nome,
+                data_nascimento: novoFilho.data_nascimento,
+                escola: novoFilho.escola ?Number(novoFilho.escola) : null
+            },
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+
+            )
+            setShowModal(false)
+            setNovoFilho({ nome: "", data_nascimento: "", escola: "", })
+            fetchFilhos();
+        } catch (error) {
+            alert("Erro ao cadastrar filho" + error)
+            console.log({
+                novoFilho
+            })
+        }
     }
 
     return (
@@ -78,6 +107,57 @@ export default function HubMinhasCriancas() {
                             ))}
                         </tbody>
                     </table>
+                </div>
+            )}
+
+            {/* Modal */}
+            {showModal && (
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-content items-center z-50">
+                    <div className="bg-white rounded-2xç shadow-xl p-6 w-[400px] relative">
+                        <button
+                            onClick={() => setShowModal(false)}
+                            className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+                        >
+                            <X size={22} />
+                        </button>
+
+                        <h2 className="text-xl font-bold text-[#003049] mb-4">Adicionar Filho</h2>
+
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                            <input
+                                type="text"
+                                placeholder="Nome"
+                                value={novoFilho.nome}
+                                onChange={(e) => setNovoFilho({ ...novoFilho, nome: e.target.value })}
+                                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FDC500]"
+                                required
+                            />
+                            <input
+                                type="date"
+                                placeholder="Data de Nascimento"
+                                value={novoFilho.data_nascimento}
+                                onChange={(e) =>
+                                    setNovoFilho({ ...novoFilho, data_nascimento: e.target.value })
+                                }
+                                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FDC500]"
+                                required
+                            />
+                            <input
+                                type="text"
+                                placeholder="Escola (opcional)"
+                                value={novoFilho.escola}
+                                onChange={(e) => setNovoFilho({ ...novoFilho, escola: e.target.value })}
+                                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FDC500]"
+                            />
+
+                            <button
+                                type="submit"
+                                className="bg-[#FDC500] hover:bg-[#e4b700] text-[#003049] font-semibold py-2 rounded-lg transition"
+                            >
+                                Cadastrar
+                            </button>
+                        </form>
+                    </div>
                 </div>
             )}
         </div>

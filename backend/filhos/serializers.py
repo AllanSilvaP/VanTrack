@@ -6,6 +6,11 @@ from escolas.models import Escola
 class FilhoSerializer (serializers.ModelSerializer):
     responsavel_nome = serializers.CharField(source='responsavel.nome', read_only=True)
     escola_nome = serializers.CharField(source='escola.nome', read_only=True)
+    escola = serializers.PrimaryKeyRelatedField(
+        queryset=Escola.objects.all(),
+        required=False,
+        allow_null=True
+    )
     idade = serializers.ReadOnlyField()
     
     class Meta:

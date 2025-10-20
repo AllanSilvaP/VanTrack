@@ -5,6 +5,7 @@ from .serializers import FilhoSerializer
 class FilhoListCreateView(generics.ListCreateAPIView):
     queryset = Filho.objects.all()
     serializer_class = FilhoSerializer
+    permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
         user = self.request.user
