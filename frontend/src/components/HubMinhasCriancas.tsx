@@ -16,6 +16,7 @@ export default function HubMinhasCriancas() {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [novoFilho, setNovoFilho] = useState({ nome: "", data_nascimento: "", escola: "", })
+    const [submitError, setSubmitError] = useState<string | null>(null);
 
     const fetchFilhos = async () => {
         try {
@@ -36,20 +37,52 @@ export default function HubMinhasCriancas() {
     }, []);
 
     const handleAddFilho = () => {
+        setSubmitError(null)
+        setNovoFilho({ nome: "", data_nascimento: "", escola: "", });
         setShowModal(true);
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setSubmitError(null)
+
+        const escolaValue = novoFilho.escola.trim();
+        let escolaPayload: number | null;
+
+        if (escolaValue === "") {
+            escolaPayload = null
+        } else {
+            const num = Number(escolaValue)
+
+            if (isNaN(num)) {
+                setSubmitError("ESCOLHA: O ID da escola deve ser um número ou deixado em branco.");
+                return;
+            }
+            escolaPayload = num;
+        }
+
+        const usuario = localStorage.getItem("user")
+
+        if(!usuario) {
+            console.error("Dados do usuário não encontrados no localStorage.");
+            return null;
+        }
+
+        const usuarioJSON = JSON.parse(usuario);
+        const responsavelId = usuarioJSON.id
+
+        const payload = {
+            nome: novoFilho.nome.trim(),
+            data_nascimento: novoFilho.data_nascimento,
+            escola: escolaPayload,
+            responsavel: responsavelId
+        };
 
         try {
             const token = localStorage.getItem("access")
             await api.post(
-                "/filhos/", {
-                nome: novoFilho.nome,
-                data_nascimento: novoFilho.data_nascimento,
-                escola: novoFilho.escola ?Number(novoFilho.escola) : null
-            },
+                "/filhos/",
+                payload,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
@@ -58,11 +91,29 @@ export default function HubMinhasCriancas() {
             setShowModal(false)
             setNovoFilho({ nome: "", data_nascimento: "", escola: "", })
             fetchFilhos();
-        } catch (error) {
-            alert("Erro ao cadastrar filho" + error)
-            console.log({
-                novoFilho
-            })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+            console.error("Erro completo ao cadastrar filho:", error.response?.data || error);
+
+            let errorMessage = "Erro desconhecido ao cadastrar. Verifique o console para detalhes.";
+
+            if (error.response) {
+                const data = error.response.data;
+                // Trata erros de validação do Django (400 Bad Request)
+                if (error.response.status === 400 && data && typeof data === 'object') {
+                    // Mapeia os erros de campo para uma única mensagem legível
+                    errorMessage = Object.keys(data).map(key => {
+                        const message = Array.isArray(data[key]) ? data[key].join(', ') : data[key];
+                        return `${key.toUpperCase()}: ${message}`;
+                    }).join(' | ');
+                } else if (error.response.status === 401) {
+                    errorMessage = "Sessão expirada ou não autenticada.";
+                } else if (data?.detail) {
+                    errorMessage = data.detail;
+                }
+            }
+
+            setSubmitError(`Falha no cadastro: ${errorMessage}`)
         }
     }
 
@@ -124,6 +175,12 @@ export default function HubMinhasCriancas() {
                         <h2 className="text-xl font-bold text-[#003049] mb-4">Adicionar Filho</h2>
 
                         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+
+                            {submitError && (
+                                <p className="text-sm text-red-600 bg-red-100 p-3 rounded-lg border border-red-300">
+                                    {submitError}
+                                </p>
+                            )}
                             <input
                                 type="text"
                                 placeholder="Nome"

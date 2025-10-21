@@ -19,7 +19,7 @@ export const AuthProvider = ({children}: {children: ReactNode})  => {
     const [user, setUser] = useState<any>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    const refreshAcessToken = useCallback(async () => {
+    const refreshAccessToken = useCallback(async () => {
         const refreshToken = localStorage.getItem("refresh");
 
         if(!refreshToken) {
@@ -78,7 +78,7 @@ export const AuthProvider = ({children}: {children: ReactNode})  => {
         let interval: number | null = null;
 
         if(isAuthenticated) {
-            interval = setInterval(refreshAcessToken, REFRESH_INTERVAL);
+            interval = setInterval(refreshAccessToken, REFRESH_INTERVAL);
         } else if (interval) {
             clearInterval(interval)
         }
@@ -88,7 +88,7 @@ export const AuthProvider = ({children}: {children: ReactNode})  => {
                 clearInterval(interval)
             }
         }
-    }, [isAuthenticated, refreshAcessToken])
+    }, [isAuthenticated, refreshAccessToken])
 
     return (
         <AuthContext.Provider value = {{user, login, logout, isAuthenticated}}>
