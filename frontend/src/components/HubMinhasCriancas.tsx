@@ -1,6 +1,6 @@
 import api from "../api/axios"
 import { useEffect, useState } from "react"
-import { Plus, X } from "lucide-react"
+import { Plus, X, Edit2, Trash2 } from "lucide-react"
 
 type Filho = {
     id: number;
@@ -11,9 +11,16 @@ type Filho = {
     responsavel_nome: string;
 }
 
+type Escola = {
+    id: number;
+    nome: string;
+}
+
 export default function HubMinhasCriancas() {
     const [filhos, setFilhos] = useState<Filho[]>([]);
+    const [escolas, setEscolas] = useState<Escola[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadingEscolas, setLoadingEscolas] = useState(true)
     const [showModal, setShowModal] = useState(false);
     const [novoFilho, setNovoFilho] = useState({ nome: "", data_nascimento: "", escola: "", })
     const [submitError, setSubmitError] = useState<string | null>(null);
@@ -32,8 +39,24 @@ export default function HubMinhasCriancas() {
         }
     }
 
+    const fetchEscokas = async () => {
+        setLoadingEscolas(true);
+        try {
+            const token = localStorage.getItem("access")
+            const response = await api.get("/escolas/", {
+                headers: { Authorization: `Bearer ${token}`}
+            })
+            setEscolas(response.data)
+        } catch (error) {
+            console.error("Erro ao buscar escolas", error);
+        } finally {
+            setLoadingEscolas(false)
+        }
+    }
+
     useEffect(() => {
         fetchFilhos();
+        fetchEscokas();
     }, []);
 
     const handleAddFilho = () => {
@@ -63,7 +86,7 @@ export default function HubMinhasCriancas() {
 
         const usuario = localStorage.getItem("user")
 
-        if(!usuario) {
+        if (!usuario) {
             console.error("Dados do usuário não encontrados no localStorage.");
             return null;
         }
@@ -91,7 +114,7 @@ export default function HubMinhasCriancas() {
             setShowModal(false)
             setNovoFilho({ nome: "", data_nascimento: "", escola: "", })
             fetchFilhos();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error("Erro completo ao cadastrar filho:", error.response?.data || error);
 
@@ -115,6 +138,14 @@ export default function HubMinhasCriancas() {
 
             setSubmitError(`Falha no cadastro: ${errorMessage}`)
         }
+    }
+
+    const handleEdit = (filhoId: number, nome: string) => {
+        alert(`EDITAR: Você clicou em editar o filho ID: ${filhoId} (${nome}).`);
+    }
+
+    const handleDelete = (filhoId: number, nome: string) => {
+        alert(`EXCLUIR: Você clicou em excluir o filho ID: ${filhoId} (${nome}).`);
     }
 
     return (
@@ -143,6 +174,7 @@ export default function HubMinhasCriancas() {
                                 <th className="py-3 px-4 text-left">Idade</th>
                                 <th className="py-3 px-4 text-left">Data de Nascimento</th>
                                 <th className="py-3 px-4 text-left">Escola</th>
+                                <th className="py-3 px-4 text-left">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -154,6 +186,21 @@ export default function HubMinhasCriancas() {
                                         {new Date(filho.data_nascimento).toLocaleDateString("pt-BR")}
                                     </td>
                                     <td className="py-3 px-4">{filho.escola_nome || "—"}</td>
+                                    <td className="py-3 px-4">
+                                        <button
+                                        onClick={() => handleEdit(filho.id, filho.nome)}
+                                        className="text-[#003049] hover:text-[#00203a] p-1 rounded-full hover:bg-gray-200 transition"
+                                        title="Editar Filho"
+                                        >
+                                            <Edit2 size={18}/>
+                                        </button>
+                                        <button
+                                        onClick={() => handleDelete(filho.id, filho.nome)}
+                                        className="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-50 transition"
+                                        title="Excluir Filho">
+                                            <Trash2 size={18}/>
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -199,13 +246,21 @@ export default function HubMinhasCriancas() {
                                 className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FDC500]"
                                 required
                             />
-                            <input
-                                type="text"
-                                placeholder="Escola (opcional)"
-                                value={novoFilho.escola}
-                                onChange={(e) => setNovoFilho({ ...novoFilho, escola: e.target.value })}
-                                className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FDC500]"
-                            />
+                            {loadingEscolas ? (
+                                <div className="text-gray-500 py-2">Carregando lista de escolas...</div>
+                            ) : (
+                                <select
+                                    value={novoFilho.escola}
+                                    onChange={(e) => setNovoFilho({...novoFilho, escola: e.target.value})}
+                                    className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#FDC500] bg-white"
+                                >
+                                    <option value="">Selecione a Escola</option>
+
+                                    {escolas.map((escola) => (
+                                        <option key={escola.id} value={escola.id}>{escola.nome}</option>
+                                    ))}
+                                </select>
+                            )}
 
                             <button
                                 type="submit"
