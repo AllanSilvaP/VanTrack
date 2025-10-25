@@ -1,0 +1,57 @@
+[
+    {
+        "model": "escolas.escola",
+        "pk": 1,
+        "fields": {
+            "nome": "Colégio Dom Bosco",
+            "endereco": "Av. W3 Sul, Quadra 702, Brasília - DF",
+            "telefone": "(61) 3443-1234",
+            "latitude": "-15.8267",
+            "longitude": "-47.8956"
+        }
+    },
+    {
+        "model": "escolas.escola",
+        "pk": 2,
+        "fields": {
+            "nome": "Centro Educacional Sigma",
+            "endereco": "SGAS 906, Conjunto B, Brasília - DF",
+            "telefone": "(61) 3443-5678",
+            "latitude": "-15.8389",
+            "longitude": "-47.9123"
+        }
+    },
+    {
+        "model": "escolas.escola",
+        "pk": 3,
+        "fields": {
+            "nome": "Escola Classe 308 Sul",
+            "endereco": "Quadra 308 Sul, Brasília - DF",
+            "telefone": "(61) 3443-9012",
+            "latitude": "-15.8156",
+            "longitude": "-47.8978"
+        }
+    },
+    {
+        "model": "escolas.escola",
+        "pk": 4,
+        "fields": {
+            "nome": "Leonardo da Vinci",
+            "endereco": "SGAS 913, Conjunto A, Brasília - DF",
+            "telefone": "(61) 3443-3456",
+            "latitude": "-15.8412",
+            "longitude": "-47.9201"
+        }
+    },
+    {
+        "model": "escolas.escola",
+        "pk": 5,
+        "fields": {
+            "nome": "Colégio La Salle",
+            "endereco": "QI 15, Conjunto U, Lago Sul, Brasília - DF",
+            "telefone": "(61) 3248-7890",
+            "latitude": "-15.8523",
+            "longitude": "-47.8712"
+        }
+    }
+]
