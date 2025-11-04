@@ -86,7 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'vantrack',
         'USER': 'postgres',
-        'PASSWORD': 'Odba.favorito',
+        'PASSWORD': 'gustavo02',
         'HOST': 'localhost',
         'PORT': '5432',
     }
